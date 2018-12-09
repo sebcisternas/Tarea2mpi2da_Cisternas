@@ -8,9 +8,7 @@ using namespace std;
 
 void num_random(int n, int a[]){
    srand(time(NULL));
- int i=0;
-
-    for(i=0;i<n;i++){
+    for(int i=0;i<n;i++){
         a[i]=rand();
     }
 }
@@ -44,19 +42,16 @@ float varianza(int n, int a[]){
 
 float desviacion(int n, int a[]){
     float var,des;
-
     var=varianza(n, a);
     des=sqrt(var);
-
     return des;
-
 }
 
 int main(int argc, char *argv[])
 {
 
     int n=10000,a[n],size,rank;
-      	float prom,var,des;
+    float prom,var,des;
 	
 
 	MPI_Status state;
@@ -68,22 +63,22 @@ int main(int argc, char *argv[])
 
 	
 
-	if(rank==0){
+	if(rank==1){
 	prom=promedio(n, a);
-	MPI_Recv(&var, 1, MPI_FLOAT, 1, 0, MPI_COMM_WORLD, &state);
-	MPI_Recv(&des, 1, MPI_FLOAT, 2, 0, MPI_COMM_WORLD, &state);
+	MPI_Recv(&var, 1, MPI_FLOAT, 2, 1, MPI_COMM_WORLD, &state);
+	MPI_Recv(&des, 1, MPI_FLOAT, 3, 1, MPI_COMM_WORLD, &state);
         cout<<"El promedio es = "<<prom<<endl;
         cout<<"La varianza es = "<<var<<endl;
         cout<<"La desviacion estandar es = "<<des<<endl;
     }
-	if(rank==1){
+	if(rank==2){
             var=varianza(n, a);
-			MPI_Send(&var, 1, MPI_FLOAT, 0, 0, MPI_COMM_WORLD);
+			MPI_Send(&var, 2, MPI_FLOAT, 1, 1, MPI_COMM_WORLD);
 				
-    if(rank==2){
+    if(rank==3){
 			des=desviacion(n, a);
 
-			MPI_Send(&des, 1, MPI_FLOAT, 0, 0, MPI_COMM_WORLD);
+			MPI_Send(&des, 1, MPI_FLOAT, 1, 1, MPI_COMM_WORLD);
     }
 		
 	}
